@@ -9,7 +9,8 @@
     "link": "cd dist/quill-emoji-mart-picker && npm link",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "publish": "cd dist/quill-emoji-mart-picker && npm publish"
+    "publish": "cd dist/quill-emoji-mart-picker && npm publish",
+    "prepare": "npm run build"
   },
   "private": true,
   "dependencies": {
