@@ -1,18 +1,18 @@
-import { Component, OnInit, VERSION } from '@angular/core';
-import { emojis } from '@nutrify/ngx-emoji-mart-picker/ngx-emoji/esm5/data/emojis';
-import { EmojiEvent } from '@nutrify/ngx-emoji-mart-picker/ngx-emoji/public_api';
+import { Component, OnInit, VERSION } from "@angular/core";
+import { emojis } from "@nutrify/ngx-emoji-mart-picker/ngx-emoji/esm5/data/emojis";
+import { EmojiEvent } from "@nutrify/ngx-emoji-mart-picker/ngx-emoji/public_api";
 
-import { Emoji } from '../lib/emoji.model';
+import { Emoji } from "../lib/emoji.model";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.scss"],
 })
 export class AppComponent implements OnInit {
-  title = 'quill-emoji-mart-picker';
+  title = "quill-emoji-mart-picker";
   version = VERSION.full;
-  set = 'apple';
+  set = "apple";
 
   modules = {};
   formats: string[] = [];
@@ -20,16 +20,17 @@ export class AppComponent implements OnInit {
 
   customEmojis = [
     {
-      name: 'Party Parrot',
-      shortNames: ['parrot'],
-      keywords: ['party'],
-      imageUrl: './assets/images/parrot.gif',
+      name: "Party Parrot",
+      shortNames: ["parrot"],
+      keywords: ["party"],
+      imageUrl: "./assets/images/parrot.gif",
     },
     {
-      name: 'Test Flag',
-      shortNames: ['test'],
-      keywords: ['test', 'flag'],
-      spriteUrl: 'https://unpkg.com/emoji-datasource-twitter@4.0.4/img/twitter/sheets-256/64.png',
+      name: "Test Flag",
+      shortNames: ["test"],
+      keywords: ["test", "flag"],
+      spriteUrl:
+        "https://unpkg.com/emoji-datasource-twitter@4.0.4/img/twitter/sheets-256/64.png",
       sheet_x: 1,
       sheet_y: 1,
       size: 64,
@@ -49,29 +50,28 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     // tslint:disable-next-line: no-console
     console.info(
-      'I am developing those modules on my own, in my free time. ' +
-      'It is very time consuming to deliver quality code.\n' +
-      '\nIf you appreciate my work, please buy me a coffee 😊\n' +
-      '\nThanks'
+      "I am developing those modules on my own, in my free time. " +
+        "It is very time consuming to deliver quality code.\n" +
+        "\nIf you appreciate my work, please buy me a coffee 😊\n" +
+        "\nThanks"
     );
   }
 
   constructor() {
-
     this.modules = {
-      'emoji-module': {
+      "emoji-module": {
         emojiData: emojis,
         customEmojiData: this.customEmojis,
         preventDrag: true,
         showTitle: true,
-        indicator: '*',
+        indicator: ":",
         convertEmoticons: true,
         convertShortNames: true,
-        set: () => this.set
+        set: () => this.set,
       },
-      toolbar: false
+      toolbar: false,
     };
 
-    this.formats = ['emoji'];
+    this.formats = ["emoji"];
   }
 }

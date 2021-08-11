@@ -1,9 +1,9 @@
-import unicodeRe from 'emoji-regex';
-import Quill from 'quill';
+import unicodeRe from "emoji-regex";
+import Quill from "quill";
 
-import { EmojiModuleOptions, EmojiSet } from './emoji.quill-module';
+import { EmojiModuleOptions, EmojiSet } from "./emoji.quill-module";
 
-const Delta = Quill.import('delta');
+const Delta = Quill.import("delta");
 
 export type ICustomEmoji = ICustomImageEmojiView | ICustomSpriteEmojiView;
 export type IEmoji = IEmojiView | ICustomEmoji;
@@ -32,7 +32,6 @@ export interface IEmojiReplacer {
 }
 
 export type IEmojiReplacement = IEmojiReplacer[];
-
 
 interface IEmojiView {
   unified: string;
@@ -65,19 +64,17 @@ interface EmojiVariation {
 }
 
 export class Emoji {
-
   static unified: { [key: string]: IEmoji } = {};
   static emoticons: { [key: string]: IEmoji } = {};
   static shortNames: { [key: string]: IEmoji } = {};
 
-  static emojiPrefix = 'qle-';
+  static emojiPrefix = "qle-";
 
   // tslint:disable-next-line: max-line-length
   static emoticonRe = `(?:\\s|^)((?:8\\))|(?:\\(:)|(?:\\):)|(?::'\\()|(?::\\()|(?::\\))|(?::\\*)|(?::-\\()|(?::-\\))|(?::-\\*)|(?::-/)|(?::->)|(?::-D)|(?::-O)|(?::-P)|(?::-\\\\)|(?::-b)|(?::-o)|(?::-p)|(?::-\\|)|(?::/)|(?::>)|(?::D)|(?::O)|(?::P)|(?::\\\\)|(?::b)|(?::o)|(?::p)|(?::\\|)|(?:;\\))|(?:;-\\))|(?:;-P)|(?:;-b)|(?:;-p)|(?:;P)|(?:;b)|(?:;p)|(?:<3)|(?:</3)|(?:=\\))|(?:=-\\))|(?:>:\\()|(?:>:-\\()|(?:C:)|(?:D:)|(?:c:))(?=\\s|$)`;
-  static shortNameRe = '(?:[^\\*]|^)(\\*([a-z0-9_\\-\\+]+)\\*)(?!\\*)';
+  static shortNameRe = "(?:[^\\*]|^)(\\:([a-z0-9_\\-\\+]+)\\:)(?!\\*)";
 
   static toCodePoint(unicodeSurrogates: string, sep?: string) {
-
     const r = [];
     let c = 0;
     let p = 0;
@@ -87,16 +84,16 @@ export class Emoji {
       c = unicodeSurrogates.charCodeAt(i++);
       if (p) {
         // tslint:disable-next-line:no-bitwise
-        r.push((0x10000 + ((p - 0xD800) << 10) + (c - 0xDC00)).toString(16));
+        r.push((0x10000 + ((p - 0xd800) << 10) + (c - 0xdc00)).toString(16));
         p = 0;
-      } else if (0xD800 <= c && c <= 0xDBFF) {
+      } else if (0xd800 <= c && c <= 0xdbff) {
         p = c;
       } else {
         r.push(c.toString(16));
       }
     }
 
-    return r.join(sep || '-');
+    return r.join(sep || "-");
   }
 
   static unicodeToEmoji(unicode: string): IEmoji {
@@ -112,35 +109,31 @@ export class Emoji {
   }
 
   static getEmojiDataFromUnified(unified: string): IEmoji {
-
     const emoji = Emoji.unified[unified.toUpperCase()];
 
     return emoji ? emoji : null;
   }
 
   static getEmojiDataFromEmoticon(emoticon: string): IEmoji {
-
     const emoji = Emoji.emoticons[emoticon];
 
     return emoji ? emoji : null;
   }
 
   static getEmojiDataFromShortName(shortName: string): IEmoji {
-
     const emoji = Emoji.shortNames[shortName.toLowerCase()];
 
     return emoji ? emoji : null;
   }
 
   static uncompress(list: CompressedEmojiData[], options: EmojiModuleOptions) {
-    list.map(emoji => {
-
-      const emojiRef = Emoji.unified[emoji.unified] = {
+    list.map((emoji) => {
+      const emojiRef = (Emoji.unified[emoji.unified] = {
         unified: emoji.unified,
         id: emoji.shortName,
         sheet: emoji.sheet,
-        emoticons: emoji.emoticons
-      };
+        emoticons: emoji.emoticons,
+      });
 
       Emoji.shortNames[emoji.shortName] = emojiRef;
 
@@ -163,7 +156,7 @@ export class Emoji {
             unified: d.unified,
             id: emojiRef.id,
             sheet: d.sheet,
-            emoticons: emojiRef.emoticons
+            emoticons: emojiRef.emoticons,
           };
         }
       }
@@ -180,30 +173,29 @@ export class Emoji {
   }
 
   static unifiedToNative(unified: string) {
-    const codePoints = unified.split('-').map(u => parseInt(`0x${u}`, 16));
+    const codePoints = unified.split("-").map((u) => parseInt(`0x${u}`, 16));
     return String.fromCodePoint(...codePoints);
   }
 
   static emojiSpriteStyles(
-    sheet: IEmojiView['sheet'],
-    set: EmojiSet | '',
+    sheet: IEmojiView["sheet"],
+    set: EmojiSet | "",
     backgroundImageFn: (set: string, sheetSize: number) => string,
     size: number = 24,
     sheetSize: 16 | 20 | 32 | 64 = 64,
     sheetColumns = 52
-    ) {
-
+  ) {
     return {
       width: `${size}px`,
       height: `${size}px`,
-      display: 'inline-block',
-      'background-image': `url(${backgroundImageFn(set, sheetSize)})`,
-      'background-size': `${100 * sheetColumns}%`,
-      'background-position': Emoji.getSpritePosition(sheet, sheetColumns),
+      display: "inline-block",
+      "background-image": `url(${backgroundImageFn(set, sheetSize)})`,
+      "background-size": `${100 * sheetColumns}%`,
+      "background-position": Emoji.getSpritePosition(sheet, sheetColumns),
     };
   }
 
-  static getSpritePosition(sheet: IEmojiView['sheet'], sheetColumns: number) {
+  static getSpritePosition(sheet: IEmojiView["sheet"], sheetColumns: number) {
     const [sheetX, sheetY] = sheet;
     const multiply = 100 / (sheetColumns - 1);
     return `${multiply * sheetX}% ${multiply * sheetY}%`;
@@ -211,11 +203,11 @@ export class Emoji {
 
   static toHex(str: string) {
     let hex: string;
-    let result = '';
+    let result = "";
 
     for (let i = 0; i < str.length; i++) {
-        hex = str.charCodeAt(i).toString(16);
-        result += ('000' + hex).slice(-4);
+      hex = str.charCodeAt(i).toString(16);
+      result += ("000" + hex).slice(-4);
     }
 
     return result;
@@ -226,18 +218,13 @@ export class Emoji {
     node: HTMLElement,
     set: EmojiSet,
     options: EmojiModuleOptions
-    ) {
-
-    if (typeof emoji === 'string') {
-
+  ) {
+    if (typeof emoji === "string") {
       const unicodeRegex = unicodeRe();
 
       if (unicodeRegex.test(emoji)) {
-
         emoji = Emoji.unicodeToEmoji(emoji);
-
       } else {
-
         const shortNameRegex = new RegExp(Emoji.shortNameRe);
         const match = shortNameRegex.exec(emoji);
         if (match && match.length > 1) {
@@ -246,34 +233,39 @@ export class Emoji {
       }
     }
 
-    if (emoji && typeof emoji === 'object') {
-
+    if (emoji && typeof emoji === "object") {
       node.classList.add(Emoji.emojiPrefix + emoji.id);
 
       // Custom image
       if ((emoji as ICustomImageEmojiView).imageUrl) {
+        node.classList.add(Emoji.emojiPrefix + "custom");
 
-        node.classList.add(Emoji.emojiPrefix + 'custom');
-
-        node.style.backgroundImage = `url("${(emoji as ICustomImageEmojiView).imageUrl}")`;
-        node.style.backgroundSize = 'contain';
+        node.style.backgroundImage = `url("${
+          (emoji as ICustomImageEmojiView).imageUrl
+        }")`;
+        node.style.backgroundSize = "contain";
       } else {
-
         // Using a sprite
         let style = null;
 
         // Default emoji using a set
         if ((emoji as IEmojiView).sheet) {
+          style = Emoji.emojiSpriteStyles(
+            (emoji as IEmojiView).sheet,
+            set,
+            options.backgroundImageFn
+          );
+        } else if ((emoji as ICustomSpriteEmojiView).spriteUrl) {
+          // Emoji using a sprite URL
 
-          style = Emoji.emojiSpriteStyles((emoji as IEmojiView).sheet, set, options.backgroundImageFn);
-
-        } else if ((emoji as ICustomSpriteEmojiView).spriteUrl) { // Emoji using a sprite URL
-
-          node.classList.add(Emoji.emojiPrefix + 'custom');
+          node.classList.add(Emoji.emojiPrefix + "custom");
 
           style = Emoji.emojiSpriteStyles(
-            [(emoji as ICustomSpriteEmojiView).sheet_x, (emoji as ICustomSpriteEmojiView).sheet_y],
-            '',
+            [
+              (emoji as ICustomSpriteEmojiView).sheet_x,
+              (emoji as ICustomSpriteEmojiView).sheet_y,
+            ],
+            "",
             () => (emoji as ICustomSpriteEmojiView).spriteUrl,
             24,
             (emoji as ICustomSpriteEmojiView).size,
@@ -282,70 +274,71 @@ export class Emoji {
         }
 
         if (style) {
-          node.style.display = 'inline-block';
-          node.style.backgroundImage = style['background-image'];
-          node.style.backgroundSize = style['background-size'];
-          node.style.backgroundPosition = style['background-position'];
+          node.style.display = "inline-block";
+          node.style.backgroundImage = style["background-image"];
+          node.style.backgroundSize = style["background-size"];
+          node.style.backgroundPosition = style["background-position"];
         }
-
       }
 
-      node.style.fontSize = 'inherit';
+      node.style.fontSize = "inherit";
 
-      node.setAttribute('src', 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7');
-      node.setAttribute('draggable', 'false');
+      node.setAttribute(
+        "src",
+        "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+      );
+      node.setAttribute("draggable", "false");
 
       if ((emoji as IEmojiView).unified) {
         const native = Emoji.unifiedToNative((emoji as IEmojiView).unified);
-        node.setAttribute('alt', native);
+        node.setAttribute("alt", native);
       } else {
-        node.setAttribute('alt', options.indicator + emoji.id + options.indicator);
+        node.setAttribute(
+          "alt",
+          options.indicator + emoji.id + options.indicator
+        );
       }
 
       if (options.showTitle) {
         const emoticons = (emoji as IEmojiView).emoticons;
 
-        let title = '';
+        let title = "";
 
         if (options.convertEmoticons && emoticons && emoticons.length > 0) {
-          title = emoticons[0] + '\u2002,\u2002';
+          title = emoticons[0] + "\u2002,\u2002";
         }
 
         title += options.indicator + emoji.id + options.indicator;
 
-        node.setAttribute('title', title);
+        node.setAttribute("title", title);
       }
-
     }
     return node;
   }
 
   static convertInput(delta: any, replacements: IEmojiReplacement): any {
-
     const changes = new Delta();
 
     let position = 0;
 
     delta.ops.forEach((op: any) => {
-
       if (op.insert) {
-
-        if (typeof op.insert === 'object') {
+        if (typeof op.insert === "object") {
           position++;
-        } else if (typeof op.insert === 'string') {
-
+        } else if (typeof op.insert === "string") {
           const text = op.insert;
 
-          let emojiText = '';
+          let emojiText = "";
           let index: number;
 
           for (const replacement of replacements) {
-
             // tslint:disable-next-line: no-conditional-assignment
             while ((replacement.match = replacement.regex.exec(text))) {
-
               // Setting the index and using the difference between the matches as a workaround for a lookahead regex
-              index = replacement.match.index + (replacement.match[0].length - replacement.match[replacement.replacementIndex].length);
+              index =
+                replacement.match.index +
+                (replacement.match[0].length -
+                  replacement.match[replacement.replacementIndex].length);
 
               emojiText = replacement.match[replacement.matchIndex];
 
@@ -354,10 +347,12 @@ export class Emoji {
               const changeIndex = position + index;
 
               if (changeIndex > 0) {
-              changes.retain(changeIndex);
+                changes.retain(changeIndex);
               }
 
-              changes.delete(replacement.match[replacement.replacementIndex].length);
+              changes.delete(
+                replacement.match[replacement.replacementIndex].length
+              );
 
               if (emoji) {
                 changes.insert({ emoji });
@@ -374,7 +369,6 @@ export class Emoji {
   }
 
   static convertPaste(delta: any, replacements: IEmojiReplacement): any {
-
     const changes = new Delta();
     let op = null;
 
@@ -383,11 +377,10 @@ export class Emoji {
       op = delta.ops[0];
     }
 
-    if (op && op.insert && typeof op.insert === 'string') {
-
+    if (op && op.insert && typeof op.insert === "string") {
       const text = op.insert;
 
-      let emojiText = '';
+      let emojiText = "";
       let currentReplacement: IEmojiReplacer = null;
       let index = 0;
 
@@ -397,18 +390,21 @@ export class Emoji {
         // Getting our first match
         let tempReplacement: IEmojiReplacer = null;
         for (const replacement of replacements) {
-
           // Select the first match in the replacements array
-          if (replacement.match === undefined || currentReplacement === replacement) {
+          if (
+            replacement.match === undefined ||
+            currentReplacement === replacement
+          ) {
             replacement.match = replacement.regex.exec(text);
           }
 
           if (replacement.match) {
-
-            if (!tempReplacement || !tempReplacement.match ||
-                (replacement.match.index < tempReplacement.match.index)
-               ) {
-                tempReplacement = replacement;
+            if (
+              !tempReplacement ||
+              !tempReplacement.match ||
+              replacement.match.index < tempReplacement.match.index
+            ) {
+              tempReplacement = replacement;
             }
           }
         }
@@ -416,12 +412,12 @@ export class Emoji {
         currentReplacement = tempReplacement;
 
         if (currentReplacement && currentReplacement.match) {
-
           // Setting the index and using the difference between the matches as a workaround for a lookahead regex
-          index = currentReplacement.match.index +
-          (
-            currentReplacement.match[0].length - currentReplacement.match[currentReplacement.replacementIndex].length
-          );
+          index =
+            currentReplacement.match.index +
+            (currentReplacement.match[0].length -
+              currentReplacement.match[currentReplacement.replacementIndex]
+                .length);
 
           if (index !== i) {
             changes.insert(text.slice(i, index));
@@ -434,7 +430,10 @@ export class Emoji {
             changes.insert({ emoji });
           }
 
-          i = index + currentReplacement.match[currentReplacement.replacementIndex].length;
+          i =
+            index +
+            currentReplacement.match[currentReplacement.replacementIndex]
+              .length;
         }
       } while (currentReplacement && currentReplacement.match);
 
@@ -448,10 +447,12 @@ export class Emoji {
 
   static insertEmoji(quill: any, event: any) {
     if (quill && quill.isEnabled()) {
-
       const range = quill.getSelection(true);
 
-      const delta = new Delta().retain(range.index).delete(range.length).insert({ emoji: event.emoji });
+      const delta = new Delta()
+        .retain(range.index)
+        .delete(range.length)
+        .insert({ emoji: event.emoji });
 
       // Using silent to not trigger text-change, but checking if the editor is enabled
       quill.updateContents(delta, Quill.sources.SILENT);
