@@ -56,7 +56,10 @@ export class EmojiModule extends Module {
     if (this.options.convertEmoticons) {
       // Emoticons to Emoji
       replacements.push({
-        regex: new RegExp(Emoji.emoticonRe, "g"),
+        regex:
+          typeof Emoji.emoticonRe === "string"
+            ? new RegExp(Emoji.emoticonRe, "g")
+            : new RegExp(Emoji.emoticonRe),
         matchIndex: 1,
         replacementIndex: 1,
         fn: (str: string) => Emoji.emoticonToEmoji(str),
@@ -66,7 +69,10 @@ export class EmojiModule extends Module {
     if (this.options.convertShortNames) {
       // ShortNames to Emoji
       replacements.push({
-        regex: new RegExp(Emoji.shortNameRe, "g"),
+        regex:
+          typeof Emoji.shortNameRe === "string"
+            ? new RegExp(Emoji.shortNameRe, "g")
+            : new RegExp(Emoji.shortNameRe),
         matchIndex: 2,
         replacementIndex: 1,
         fn: (str: string) => Emoji.shortNameToEmoji(str),
