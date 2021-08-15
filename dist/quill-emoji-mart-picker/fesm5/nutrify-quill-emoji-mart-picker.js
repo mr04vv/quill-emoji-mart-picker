@@ -45,7 +45,10 @@ var Emoji = /** @class */ (function () {
         return emoji ? emoji : null;
     };
     Emoji.getEmojiDataFromShortName = function (shortName) {
-        var emoji = Emoji.shortNames[shortName.toLowerCase()];
+        var emoji = Emoji.shortNames[(shortName.includes(":")
+            ? shortName.split(":")[1]
+            : shortName).toLowerCase()];
+        console.debug(shortName);
         return emoji ? emoji : null;
     };
     Emoji.uncompress = function (list, options) {
@@ -172,6 +175,7 @@ var Emoji = /** @class */ (function () {
                 var match = shortNameRegex.exec(emoji);
                 if (match && match.length > 1) {
                     emoji = Emoji.shortNameToEmoji(match[1]);
+                    console.debug(emoji);
                 }
             }
         }
@@ -230,6 +234,7 @@ var Emoji = /** @class */ (function () {
     Emoji.convertInput = function (delta, replacements) {
         var changes = new Delta();
         var position = 0;
+        console.debug("here");
         delta.ops.forEach(function (op) {
             var e_5, _a;
             if (op.insert) {
@@ -259,6 +264,9 @@ var Emoji = /** @class */ (function () {
                                 changes.delete(replacement.match[replacement.replacementIndex].length);
                                 if (emoji) {
                                     changes.insert({ emoji: emoji });
+                                }
+                                else {
+                                    changes.insert("" + emojiText);
                                 }
                             }
                         }
@@ -368,15 +376,15 @@ var Emoji = /** @class */ (function () {
     return Emoji;
 }());
 
-var Module = Quill.import('core/module');
+var Module = Quill.import("core/module");
 var EmojiModuleOptions = /** @class */ (function () {
     function EmojiModuleOptions() {
-        this.showTitle = true;
+        this.showTitle = false;
         this.preventDrag = true;
-        this.indicator = ':';
+        this.indicator = ":";
         this.convertEmoticons = true;
         this.convertShortNames = true;
-        this.set = function () { return 'apple'; };
+        this.set = function () { return "apple"; };
         this.backgroundImageFn = function (set, sheetSize) {
             return "https://unpkg.com/emoji-datasource-" + set + "@4.0.4/img/" + set + "/sheets-256/" + sheetSize + ".png";
         };
@@ -392,25 +400,27 @@ var EmojiModule = /** @class */ (function (_super) {
         _this.isEdgeBrowser = false;
         _this.pasted = false;
         _this.options = options;
-        if (navigator.userAgent.indexOf('Edge') > -1) {
+        if (navigator.userAgent.indexOf("Edge") > -1) {
             _this.isEdgeBrowser = true;
         }
         Emoji.uncompress(options.emojiData, options);
         if (options.preventDrag) {
             // Prevent emojis from dragging
-            quill.container.addEventListener('dragstart', function (event) {
+            quill.container.addEventListener("dragstart", function (event) {
                 event.preventDefault();
                 return false;
             });
         }
         // Convert pasted unicode / emoticons / shortNames
         _this.quill.clipboard.addMatcher(Node.TEXT_NODE, function (node, delta) {
+            console.debug("here");
             return Emoji.convertPaste(delta, _this.replacements);
         });
         // Listen for text change to convert typed in emojis or pasted emojis using Windows 10 Emojis / mobile
-        quill.on('text-change', function (delta, oldDelta, source) {
+        quill.on("text-change", function (delta, oldDelta, source) {
             // text-change also triggers on a paste event, this is a hack to prevent one more check
             if (!_this.pasted && source === Quill.sources.USER) {
+                console.debug("sdjfklsdklfjsdakl");
                 var changes = Emoji.convertInput(quill.getContents(), _this.replacements);
                 if (changes.ops.length > 0) {
                     quill.updateContents(changes, Quill.sources.SILENT);
@@ -420,10 +430,10 @@ var EmojiModule = /** @class */ (function (_super) {
         });
         // Changing cut to copy and delete
         // There seems to be a bug with Quill + Chrome with cut. The performance is much worse
-        if (navigator.userAgent.indexOf('Chrome') > -1) {
-            quill.container.addEventListener('cut', function (event) {
+        if (navigator.userAgent.indexOf("Chrome") > -1) {
+            quill.container.addEventListener("cut", function (event) {
                 var selection = document.getSelection();
-                document.execCommand('copy');
+                document.execCommand("copy");
                 selection.deleteFromDocument();
                 event.preventDefault();
             });
@@ -431,10 +441,10 @@ var EmojiModule = /** @class */ (function (_super) {
         // Edge Bug #1: Image alt tags are not copied.
         // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/13921866/
         // Edge Bug #2: the url() functions in inline styles are getting escaped when pasted
-        quill.container.addEventListener('paste', function (event) {
+        quill.container.addEventListener("paste", function (event) {
             _this.pasted = true;
             if (_this.isEdgeBrowser) {
-                event.clipboardData.setData('text/html', event.clipboardData.getData('text/html').replace(/&amp;quot;/g, '"'));
+                event.clipboardData.setData("text/html", event.clipboardData.getData("text/html").replace(/&amp;quot;/g, '"'));
             }
         });
         return _this;
@@ -447,25 +457,25 @@ var EmojiModule = /** @class */ (function (_super) {
                     regex: unicodeRe(),
                     matchIndex: 0,
                     replacementIndex: 0,
-                    fn: function (str) { return Emoji.unicodeToEmoji(str); }
-                }
+                    fn: function (str) { return Emoji.unicodeToEmoji(str); },
+                },
             ];
             if (this.options.convertEmoticons) {
                 // Emoticons to Emoji
                 replacements.push({
-                    regex: new RegExp(Emoji.emoticonRe, 'g'),
+                    regex: new RegExp(Emoji.emoticonRe, "g"),
                     matchIndex: 1,
                     replacementIndex: 1,
-                    fn: function (str) { return Emoji.emoticonToEmoji(str); }
+                    fn: function (str) { return Emoji.emoticonToEmoji(str); },
                 });
             }
             if (this.options.convertShortNames) {
                 // ShortNames to Emoji
                 replacements.push({
-                    regex: new RegExp(Emoji.shortNameRe, 'g'),
+                    regex: new RegExp(Emoji.shortNameRe, "g"),
                     matchIndex: 2,
                     replacementIndex: 1,
-                    fn: function (str) { return Emoji.shortNameToEmoji(str); }
+                    fn: function (str) { return Emoji.shortNameToEmoji(str); },
                 });
             }
             return replacements;
@@ -478,7 +488,7 @@ var EmojiModule = /** @class */ (function (_super) {
             return EmojiModule.options;
         },
         set: function (options) {
-            EmojiModule.options = __assign(__assign({}, (new EmojiModuleOptions())), options);
+            EmojiModule.options = __assign(__assign({}, new EmojiModuleOptions()), options);
         },
         enumerable: true,
         configurable: true
@@ -507,7 +517,7 @@ var EmojiBlot = /** @class */ (function (_super) {
     return EmojiBlot;
 }(Parchment.Embed));
 // tslint:disable: no-string-literal
-EmojiBlot["blotName"] = "emoji-mart";
+EmojiBlot["blotName"] = "emoji";
 EmojiBlot["className"] = "ql-emoji";
 EmojiBlot["tagName"] = "img";
 
