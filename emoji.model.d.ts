@@ -17,7 +17,7 @@ export interface CompressedEmojiData {
 }
 export interface IEmojiReplacer {
     regex: RegExp;
-    fn: (str: string) => IEmoji;
+    fn: (str: string) => IEmoji | string;
     matchIndex: number;
     replacementIndex: number;
     match?: RegExpExecArray;
@@ -63,7 +63,7 @@ export declare class Emoji {
     static emoticonRe: string;
     static shortNameRe: string;
     static toCodePoint(unicodeSurrogates: string, sep?: string): string;
-    static unicodeToEmoji(unicode: string): IEmoji;
+    static unicodeToEmoji(unicode: string): IEmoji | string;
     static emoticonToEmoji(emoticon: string): IEmoji;
     static shortNameToEmoji(shortName: string): IEmoji;
     static getEmojiDataFromUnified(unified: string): IEmoji;

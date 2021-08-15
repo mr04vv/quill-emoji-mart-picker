@@ -1,6 +1,6 @@
-import { CompressedEmojiData, ICustomEmoji, IEmojiReplacement } from './emoji.model';
+import { CompressedEmojiData, ICustomEmoji, IEmojiReplacement } from "./emoji.model";
 declare const Module: any;
-export declare type EmojiSet = 'apple' | 'google' | 'twitter' | 'emojione' | 'messenger' | 'facebook' | '';
+export declare type EmojiSet = "apple" | "google" | "twitter" | "emojione" | "messenger" | "facebook" | "";
 export declare class EmojiModuleOptions {
     emojiData: CompressedEmojiData[];
     customEmojiData?: ICustomEmoji[];
