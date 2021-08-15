@@ -25,7 +25,7 @@ export interface CompressedEmojiData {
 
 export interface IEmojiReplacer {
   regex: RegExp;
-  fn: (str: string) => IEmoji;
+  fn: (str: string) => IEmoji | string;
   matchIndex: number;
   replacementIndex: number; // Workaround to support regex lookahead on all browsers
   match?: RegExpExecArray;
@@ -96,7 +96,7 @@ export class Emoji {
     return r.join(sep || "-");
   }
 
-  static unicodeToEmoji(unicode: string): IEmoji {
+  static unicodeToEmoji(unicode: string): IEmoji | string {
     return Emoji.getEmojiDataFromUnified(Emoji.toCodePoint(unicode));
   }
 
@@ -121,7 +121,15 @@ export class Emoji {
   }
 
   static getEmojiDataFromShortName(shortName: string): IEmoji {
-    const emoji = Emoji.shortNames[shortName.toLowerCase()];
+    const emoji =
+      Emoji.shortNames[
+        (shortName.includes(":")
+          ? shortName.split(":")[1]
+          : shortName
+        ).toLowerCase()
+      ];
+
+    console.debug(shortName);
 
     return emoji ? emoji : null;
   }
@@ -229,6 +237,7 @@ export class Emoji {
         const match = shortNameRegex.exec(emoji);
         if (match && match.length > 1) {
           emoji = Emoji.shortNameToEmoji(match[1]);
+          console.debug(emoji);
         }
       }
     }
@@ -320,6 +329,7 @@ export class Emoji {
     const changes = new Delta();
 
     let position = 0;
+    console.debug("here");
 
     delta.ops.forEach((op: any) => {
       if (op.insert) {
@@ -356,6 +366,8 @@ export class Emoji {
 
               if (emoji) {
                 changes.insert({ emoji });
+              } else {
+                changes.insert(`${emojiText}`);
               }
             }
           }

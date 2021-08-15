@@ -1,14 +1,12 @@
-import Quill from 'quill';
+import Quill from "quill";
 
-import { Emoji, IEmoji } from './emoji.model';
-import { EmojiModule } from './emoji.quill-module';
+import { Emoji, IEmoji } from "./emoji.model";
+import { EmojiModule } from "./emoji.quill-module";
 
-const Parchment: any = Quill.import('parchment');
+const Parchment: any = Quill.import("parchment");
 
 export class EmojiBlot extends Parchment.Embed {
-
   static create(value: string | IEmoji) {
-
     const node: HTMLElement = super.create() as HTMLElement;
 
     const options = EmojiModule.options;
@@ -21,11 +19,11 @@ export class EmojiBlot extends Parchment.Embed {
   }
 
   static value(node: HTMLElement) {
-    return node.getAttribute('alt');
+    return node.getAttribute("alt");
   }
 }
 
 // tslint:disable: no-string-literal
-EmojiBlot['blotName'] = 'emoji';
-EmojiBlot['className'] = 'ql-emoji';
-EmojiBlot['tagName'] = 'img';
+EmojiBlot["blotName"] = "emoji";
+EmojiBlot["className"] = "ql-emoji";
+EmojiBlot["tagName"] = "img";

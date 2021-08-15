@@ -487,7 +487,7 @@ var EmojiModule = /** @class */ (function (_super) {
     return EmojiModule;
 }(Module));
 
-var Parchment = Quill.import('parchment');
+var Parchment = Quill.import("parchment");
 var EmojiBlot = /** @class */ (function (_super) {
     __extends(EmojiBlot, _super);
     function EmojiBlot() {
@@ -502,14 +502,14 @@ var EmojiBlot = /** @class */ (function (_super) {
         return node;
     };
     EmojiBlot.value = function (node) {
-        return node.getAttribute('alt');
+        return node.getAttribute("alt");
     };
     return EmojiBlot;
 }(Parchment.Embed));
 // tslint:disable: no-string-literal
-EmojiBlot['blotName'] = 'emoji';
-EmojiBlot['className'] = 'ql-emoji';
-EmojiBlot['tagName'] = 'img';
+EmojiBlot["blotName"] = "emoji-mart";
+EmojiBlot["className"] = "ql-emoji";
+EmojiBlot["tagName"] = "img";
 
 var emojis = [
     {

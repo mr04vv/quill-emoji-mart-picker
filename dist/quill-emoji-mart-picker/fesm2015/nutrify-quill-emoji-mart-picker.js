@@ -404,7 +404,7 @@ class EmojiModule extends Module {
 }
 EmojiModule.options = null;
 
-const Parchment = Quill.import('parchment');
+const Parchment = Quill.import("parchment");
 class EmojiBlot extends Parchment.Embed {
     static create(value) {
         const node = super.create();
@@ -415,13 +415,13 @@ class EmojiBlot extends Parchment.Embed {
         return node;
     }
     static value(node) {
-        return node.getAttribute('alt');
+        return node.getAttribute("alt");
     }
 }
 // tslint:disable: no-string-literal
-EmojiBlot['blotName'] = 'emoji';
-EmojiBlot['className'] = 'ql-emoji';
-EmojiBlot['tagName'] = 'img';
+EmojiBlot["blotName"] = "emoji-mart";
+EmojiBlot["className"] = "ql-emoji";
+EmojiBlot["tagName"] = "img";
 
 const emojis = [
     {

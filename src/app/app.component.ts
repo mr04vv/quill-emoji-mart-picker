@@ -65,7 +65,7 @@ export class AppComponent implements OnInit {
         preventDrag: true,
         showTitle: true,
         indicator: ":",
-        convertEmoticons: true,
+        convertEmoticons: false,
         convertShortNames: true,
         set: () => this.set,
       },
